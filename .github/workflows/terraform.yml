@@ -64,7 +64,7 @@ jobs:
         shell: bash
 
     steps:
-      -name: vande
-      run: echo "hello"
+        name: vand
+        run: echo "hello"
     
     
