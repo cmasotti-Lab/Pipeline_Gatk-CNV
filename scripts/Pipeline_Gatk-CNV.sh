@@ -50,7 +50,7 @@ step1_PreprocessIntervals (){
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
     --bin-length 0 \
     --interval-merging-rule OVERLAPPING_ONLY \
-    -O $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list
+    -O $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list 2> $OUTPUT_DIR/step1_PreprocessIntervals/step1_PreprocessIntervals.log
 }
 export -f step1_PreprocessIntervals
 
@@ -65,7 +65,7 @@ step2_AnnotateIntervals (){
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     #-XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
-    -O $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv
+    -O $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
 }
 export -f step2_AnnotateIntervals
 
@@ -82,7 +82,7 @@ step3_CollectReadCounts (){
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     #-XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
-    -O  $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5
+    -O  $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5  2> $OUTPUT_DIR/step3_CollectReadCounts/$NAME.log
 }
 export -f step3_CollectReadCounts
 
@@ -99,7 +99,7 @@ step4_DenoiseReadCounts (){
     --annotated-intervals $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv \
     --count-panel-of-normals ${PON} \
     --standardized-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.standardizedCR.tsv \
-    --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv
+    --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  2> $OUTPUT_DIR/step4_DenoiseReadCounts/$NAME.log
 }
 export -f step4_DenoiseReadCounts
 
@@ -117,7 +117,7 @@ step5_PlotDenoisedCopyRatios (){
     --sequence-dictionary ${REF_FASTA}/Homo_sapiens_assembly38.dict \
     --minimum-contig-length 46709983 \
     --output $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/ \
-    --output-prefix ${NAME}
+    --output-prefix ${NAME}  2> $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/$NAME.log
 }
 export -f step5_PlotDenoisedCopyRatios
 
@@ -132,7 +132,7 @@ step6_CollectAllelicCounts (){
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     -I $SAMPLE \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
-    -O $OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv
+    -O $OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv  2> $OUTPUT_DIR/step6_CollectAllelicCounts/$NAME.log
 }
 export -f step6_CollectAllelicCounts
 
@@ -148,7 +148,7 @@ step7_ModelSegments (){
      --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
      --allelic-counts  OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
      --output-prefix ${NAME} \
-     -O $OUTPUT_DIR/step7_ModelSegments/
+     -O $OUTPUT_DIR/step7_ModelSegments/  2> $OUTPUT_DIR/step7_ModelSegments/$NAME.log
 }
 export -f step7_ModelSegments
 
@@ -163,7 +163,7 @@ step8_CallCopyRatioSegments (){
 
   ${GATK} CallCopyRatioSegments \
     --input $OUTPUT_DIR/step7_ModelSegments/${NAME}.cr.seg \
-    --output $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg
+    --output $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg  2> $OUTPUT_DIR/step8_CallCopyRatioSegments/$NAME.log
 }
 export -f step8_CallCopyRatioSegments
 
@@ -182,7 +182,7 @@ step9_PlotModeledSegments (){
     --sequence-dictionary ${REF_FASTA}/Homo_sapiens_assembly38.dict \
     --minimum-contig-length 46709983 \
     --output $OUTPUT_DIR/step9_PlotModeledSegments/ \
-    --output-prefix ${NAME}
+    --output-prefix ${NAME}  2> $OUTPUT_DIR/step9_PlotModeledSegments/$NAME.log
 }
 export -f step9_PlotModeledSegments
 
