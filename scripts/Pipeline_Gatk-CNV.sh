@@ -19,7 +19,7 @@ ANNOVAR="$SCRATCH60/tools/annovar/table_annovar.pl"
 ANNOVAR_DB="$SCRATCH60/humandb/"
 GATK="$SCRATCH60/tools/gatk-4.3.0.0/./gatk"
 TARGET="$SCRATCH60/references/xgen-exome-research-panel-v2-targets-hg38.autossome.bed"
-BLACKLIST="$SCRATCH60/reference/CNV_and_centromere_blacklist.hg38liftover.list"
+BLACKLIST="$SCRATCH60/references/CNV_and_centromere_blacklist.hg38liftover.list"
 PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.hdf5"
 
 mkdir $OUTPUT_DIR
