@@ -62,9 +62,9 @@ step2_AnnotateIntervals (){
   ${GATK} AnnotateIntervals \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
-    #-XL $BLACKLIST \
+    -XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
-    -O $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
+    -- $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
 }
 export -f step2_AnnotateIntervals
 
@@ -79,7 +79,7 @@ step3_CollectReadCounts (){
   ${GATK} CollectReadCounts \
     -I $SAMPLE  \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
-    #-XL $BLACKLIST \
+    -XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
     -O  $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5  2> $OUTPUT_DIR/step3_CollectReadCounts/$NAME.log
 }
