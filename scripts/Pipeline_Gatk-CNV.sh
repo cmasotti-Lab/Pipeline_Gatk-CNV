@@ -64,7 +64,7 @@ step2_AnnotateIntervals (){
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     -XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
-    -- $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
+    -O $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
 }
 export -f step2_AnnotateIntervals
 
