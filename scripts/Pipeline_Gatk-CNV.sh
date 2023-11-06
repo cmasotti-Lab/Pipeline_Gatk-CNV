@@ -53,7 +53,6 @@ step1_PreprocessIntervals (){
 }
 export -f step1_PreprocessIntervals
 
-
 step2_AnnotateIntervals (){
   echo "" >> $OUTPUT_LOG
   echo ">>>>>> Executando step2_AnnotateIntervals <<<" >> $OUTPUT_LOG
