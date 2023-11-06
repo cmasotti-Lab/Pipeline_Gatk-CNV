@@ -12,6 +12,7 @@ OUTPUT_DIR=$SCRATCH60"/Result_Gatk-CNV."$DATA
 INPUT_DIR="/home/scratch60/rtorreglosa_12jan2024/preprocessing_READ_result/"
 BAM_FILES=$(find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam')
 JOBS=5
+MAXmem=280/${JOBS}
 
 #TOOLS e DATABASES
 REF_FASTA="/home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/"
@@ -37,13 +38,14 @@ export GATK
 export PON
 export TARGET
 export BLACKLIST
+export MAXmem
 
 step1_PreprocessIntervals (){
   echo "" >> $OUTPUT_LOG
   echo ">>>>>> Executando step1_PreprocessIntervals <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} PreprocessIntervals \
+  ${GATK} --java-options "-Xmx${MAXmem}G" PreprocessIntervals \
     -L ${TARGET} \
     -XL ${BLACKLIST} \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
