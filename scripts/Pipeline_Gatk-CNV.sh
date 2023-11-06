@@ -12,7 +12,8 @@ OUTPUT_DIR=$SCRATCH60"/Result_Gatk-CNV."$DATA
 INPUT_DIR="/home/scratch60/rtorreglosa_12jan2024/preprocessing_READ_result/"
 BAM_FILES=$(find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam')
 JOBS=5
-MAXmem=280/${JOBS}
+mem=280
+MAXmem=$((mem / JOBS))
 
 #TOOLS e DATABASES
 REF_FASTA="/home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/"
