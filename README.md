@@ -1,6 +1,7 @@
 # Pipeline-GATK_CNV
 
-![image](https://github.com/cmasotti-Lab/Pipeline_Gatk-CNV/assets/11162991/71bfc5e6-c512-4db2-bc8d-5e0e06231686)
+![image](https://github.com/cmasotti-Lab/Pipeline_Gatk-CNV/pipeline_cnv.png)
+
 [Detailed Extended Pipelines](https://drive.google.com/file/d/100eEe_oiofVWKpySCTJfEtS2OvwRBM9m/view?usp=sharing)
 
 This pipeline has been developed to identify somatic copy number variations (CNV) in tumor-only exome data.
