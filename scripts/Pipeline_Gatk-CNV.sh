@@ -9,7 +9,7 @@ SCRATCH60="/home/scratch60/vlira_21set2023/"
 DATA=$(date "+%F") # EDITE SE QUISER USAR UMA PASTA DE UMA DATA ESPECIFICA 
 OUTPUT_DIR=$SCRATCH60"/Result_Gatk-CNV."$DATA
 
-INPUT_DIR="/home/scratch60/rtorreglosa_12novl2023/preprocessing_READ_result/"
+INPUT_DIR="/home/scratch60/rtorreglosa_12jan2024/preprocessing_READ_result/"
 BAM_FILES=$(find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam')
 JOBS=5
 
