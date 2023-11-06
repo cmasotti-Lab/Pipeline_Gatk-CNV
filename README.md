@@ -1,6 +1,6 @@
 # Pipeline-GATK_CNV
 
-![image](https://github.com/cmasotti-Lab/blob/main/Pipeline_Gatk-CNV/pipeline_cnv.png)
+![image](https://github.com/cmasotti-Lab/Pipeline_Gatk-CNV/blob/main/pipeline_cnv.png)
 
 [Detailed Extended Pipelines](https://drive.google.com/file/d/100eEe_oiofVWKpySCTJfEtS2OvwRBM9m/view?usp=sharing)
 
