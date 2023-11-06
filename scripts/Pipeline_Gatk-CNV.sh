@@ -20,8 +20,7 @@ ANNOVAR_DB="$SCRATCH60/humandb/"
 GATK="$WD/gatk-4.3.0.0/./gatk"
 TARGET="$WD/reference/xgen-exome-research-panel-v2-targets-hg38.autossome.bed"
 BLACKLIST="$WD/reference/CNV_and_centromere_blacklist.hg38liftover.list"
-PON=""
-
+PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.hdf5"
 
 mkdir $OUTPUT_DIR
 
@@ -199,26 +198,26 @@ step1_PreprocessIntervals
 mkdir $OUTPUT_DIR/step2_AnnotateIntervals/
 step2_AnnotateIntervals
 
-mkdir $OUTPUT_DIR/step3_CollectReadCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
+# mkdir $OUTPUT_DIR/step3_CollectReadCounts/
+# xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
 
-mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
+# mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
+# xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
 
-mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
+# mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
+# xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
 
-mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
+# mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
+# xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
 
-mkdir $OUTPUT_DIR/step7_ModelSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
+# mkdir $OUTPUT_DIR/step7_ModelSegments/
+# xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
 
-mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
+# mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
+# xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
 
-mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments  "$@"' 'step9_PlotModeledSegments'
+# mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
+# xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments  "$@"' 'step9_PlotModeledSegments'
 
 
 
