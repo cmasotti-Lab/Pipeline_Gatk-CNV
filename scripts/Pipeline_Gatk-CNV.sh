@@ -46,7 +46,7 @@ step1_PreprocessIntervals (){
   echo ">>>>>> Executando step1_PreprocessIntervals <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} --java-options "-Xmx${MAXmem}G" PreprocessIntervals \
+  ${GATK} --java-options "-Xmx${MAXmem}G"  PreprocessIntervals \
     -L ${TARGET} \
     -XL ${BLACKLIST} \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
@@ -61,7 +61,7 @@ step2_AnnotateIntervals (){
   echo ">>>>>> Executando step2_AnnotateIntervals <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} AnnotateIntervals \
+  ${GATK} --java-options "-Xmx${MAXmem}G" AnnotateIntervals \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     -XL $BLACKLIST \
@@ -78,7 +78,7 @@ step3_CollectReadCounts (){
   echo ">>>>>> Executando step3_CollectReadCounts para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} CollectReadCounts \
+  ${GATK} --java-options "-Xmx${MAXmem}G" CollectReadCounts \
     -I $SAMPLE  \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     -XL $BLACKLIST \
@@ -95,7 +95,7 @@ step4_DenoiseReadCounts (){
   date >> $OUTPUT_LOG
 
 
-  ${GATK} DenoiseReadCounts \
+  ${GATK} --java-options "-Xmx${MAXmem}G" DenoiseReadCounts \
     -I $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5 \
     --annotated-intervals $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv \
     --count-panel-of-normals ${PON} \
@@ -112,7 +112,7 @@ step5_PlotDenoisedCopyRatios (){
   echo ">>>>>> Executando step5_PlotDenoisedCopyRatios para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} PlotDenoisedCopyRatios \
+  ${GATK} --java-options "-Xmx${MAXmem}G" PlotDenoisedCopyRatios \
     --standardized-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.standardizedCR.tsv \
     --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv \
     --sequence-dictionary ${REF_FASTA}/Homo_sapiens_assembly38.dict \
@@ -129,7 +129,7 @@ step6_CollectAllelicCounts (){
   echo ">>>>>> Executando step6_CollectAllelicCounts para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} CollectAllelicCounts \
+  ${GATK} --java-options "-Xmx${MAXmem}G" CollectAllelicCounts \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
     -I $SAMPLE \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
@@ -145,7 +145,7 @@ step7_ModelSegments (){
   echo ">>>>>> Executando step7_ModelSegments para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} ModelSegments \
+  ${GATK} --java-options "-Xmx${MAXmem}G" ModelSegments \
      --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
      --allelic-counts  OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
      --output-prefix ${NAME} \
@@ -162,7 +162,7 @@ step8_CallCopyRatioSegments (){
   echo ">>>>>> Executando step8_CallCopyRatioSegments para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} CallCopyRatioSegments \
+  ${GATK} --java-options "-Xmx${MAXmem}G" CallCopyRatioSegments \
     --input $OUTPUT_DIR/step7_ModelSegments/${NAME}.cr.seg \
     --output $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg  2> $OUTPUT_DIR/step8_CallCopyRatioSegments/$NAME.log
 }
@@ -176,7 +176,7 @@ step9_PlotModeledSegments (){
   echo ">>>>>> Executando step9_PlotModeledSegments para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-  ${GATK} PlotModeledSegments \
+  ${GATK} --java-options "-Xmx${MAXmem}G" PlotModeledSegments \
     --denoised-copy-ratios  $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
     --allelic-counts $OUTPUT_DIR/step7_ModelSegments/${NAME}.hets.tsv \
     --segments $OUTPUT_DIR/step7_ModelSegments/${NAME}.modelFinal.seg \
