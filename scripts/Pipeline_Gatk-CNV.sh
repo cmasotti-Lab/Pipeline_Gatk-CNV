@@ -196,19 +196,19 @@ mkdir $OUTPUT_DIR/step2_AnnotateIntervals/
 step2_AnnotateIntervals
 
 mkdir $OUTPUT_DIR/step3_CollectReadCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
 
 mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
 
 mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
 
 mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
 
 mkdir $OUTPUT_DIR/step7_ModelSegments/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
 
 mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
