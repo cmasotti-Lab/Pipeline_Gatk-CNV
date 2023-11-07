@@ -142,7 +142,7 @@ step7_ModelSegments (){
 
   ${GATK} --java-options "-Xmx${MAXmem}G" ModelSegments \
      --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
-     --allelic-counts  OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
+     --allelic-counts  $OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
      --output-prefix ${NAME} \
      -O $OUTPUT_DIR/step7_ModelSegments/  2> $OUTPUT_DIR/step7_ModelSegments/$NAME.log
 }
