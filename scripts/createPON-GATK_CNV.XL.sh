@@ -5,6 +5,7 @@ CRAM_FILES=$(find "$CRAM_DIR" -maxdepth 1 -mindepth 1  -name '*.cram')
 REF_FASTA="$WD/reference/"
 GATK="$WD/gatk-4.3.0.0/./gatk"
 TARGET="$WD/reference/xgen-exome-research-panel-v2-targets-hg38.autossome.bed"
+BLACKLIST="$WD/reference/CNV_and_centromere_blacklist.hg38liftover.list"
 
 OUTPUT_DIR="RESULT_PON-GATK_CNV-gatk4.3.0.0-2023-11-06"
 mkdir $OUTPUT_DIR
@@ -27,6 +28,7 @@ STAGE_PreprocessIntervals(){
 
   $GATK PreprocessIntervals \
         -L $TARGET \
+        -XL $BLACKLIST \
         -R $REF_FASTA/Homo_sapiens_assembly38.fasta \
         --bin-length 0 \
         --interval-merging-rule OVERLAPPING_ONLY \
@@ -41,6 +43,7 @@ STAGE_AnnotateIntervals() {
   $GATK AnnotateIntervals \
       -R $REF_FASTA/Homo_sapiens_assembly38.fasta \
       -L $OUTPUT_DIR/PreprocessAnnotateIntervals/preprocessed_intervals.interval_list  \
+      -XL $BLACKLIST \
       --interval-merging-rule OVERLAPPING_ONLY \
       -O $OUTPUT_DIR/PreprocessAnnotateIntervals/annotated_intervals.tsv 2>> $TIME_FILE
 }
@@ -57,6 +60,7 @@ STAGE_CollectReadCounts(){
   $GATK CollectReadCounts \
         -I $SAMPLE \
         -L $OUTPUT_DIR/PreprocessAnnotateIntervals/preprocessed_intervals.interval_list  \
+        -XL $BLACKLIST \
         -R $REF_FASTA/Homo_sapiens_assembly38.fasta  \
         --format TSV \
         --interval-merging-rule OVERLAPPING_ONLY \

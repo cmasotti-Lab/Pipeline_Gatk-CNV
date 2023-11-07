@@ -21,6 +21,7 @@ ANNOVAR="$SCRATCH60/tools/annovar/table_annovar.pl"
 ANNOVAR_DB="$SCRATCH60/humandb/"
 GATK="$SCRATCH60/tools/gatk-4.3.0.0/./gatk"
 TARGET="$SCRATCH60/references/xgen-exome-research-panel-v2-targets-hg38.autossome.bed"
+BLACKLIST="$SCRATCH60/references/CNV_and_centromere_blacklist.hg38liftover.list"
 PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.hdf5"
 
 mkdir $OUTPUT_DIR
@@ -37,6 +38,7 @@ export ANNOVAR_DB
 export GATK
 export PON
 export TARGET
+export BLACKLIST
 export MAXmem
 
 step1_PreprocessIntervals (){
@@ -46,6 +48,7 @@ step1_PreprocessIntervals (){
 
   ${GATK} --java-options "-Xmx${MAXmem}G"  PreprocessIntervals \
     -L ${TARGET} \
+    -XL ${BLACKLIST} \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
     --bin-length 0 \
     --interval-merging-rule OVERLAPPING_ONLY \
@@ -61,6 +64,7 @@ step2_AnnotateIntervals (){
   ${GATK} --java-options "-Xmx${MAXmem}G" AnnotateIntervals \
     -R ${REF_FASTA}/Homo_sapiens_assembly38.fasta \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
+    -XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
     -O $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv  2> $OUTPUT_DIR/step2_AnnotateIntervals/step2_AnnotateIntervals.log
 }
@@ -77,6 +81,7 @@ step3_CollectReadCounts (){
   ${GATK} --java-options "-Xmx${MAXmem}G" CollectReadCounts \
     -I $SAMPLE  \
     -L $OUTPUT_DIR/step1_PreprocessIntervals/targets.preprocessed.interval_list \
+    -XL $BLACKLIST \
     --interval-merging-rule OVERLAPPING_ONLY \
     -O  $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5  2> $OUTPUT_DIR/step3_CollectReadCounts/$NAME.log
 }
