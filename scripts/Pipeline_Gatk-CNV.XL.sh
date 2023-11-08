@@ -13,7 +13,8 @@ INPUT_DIR="/home/scratch60/rtorreglosa_12jan2024/preprocessing_READ_result/"
 BAM_FILES=$(find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam')
 JOBS=5
 mem=280
-MAXmem=$((mem / JOBS))
+#MAXmem=$((mem / JOBS))
+MAXmem=200
 
 #TOOLS e DATABASES
 REF_FASTA="/home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/"
@@ -22,7 +23,7 @@ ANNOVAR_DB="$SCRATCH60/humandb/"
 GATK="$SCRATCH60/tools/gatk-4.3.0.0/./gatk"
 TARGET="$SCRATCH60/references/xgen-exome-research-panel-v2-targets-hg38.autossome.bed"
 BLACKLIST="$SCRATCH60/references/CNV_and_centromere_blacklist.hg38liftover.list"
-PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.hdf5"
+PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.XL.hdf5"
 
 mkdir $OUTPUT_DIR
 
@@ -147,7 +148,7 @@ step7_ModelSegments (){
 
   ${GATK} --java-options "-Xmx${MAXmem}G" ModelSegments \
      --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
-     --allelic-counts  OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
+     --allelic-counts  $OUTPUT_DIR/step6_CollectAllelicCounts/${NAME}.allelicCounts.tsv \
      --output-prefix ${NAME} \
      -O $OUTPUT_DIR/step7_ModelSegments/  2> $OUTPUT_DIR/step7_ModelSegments/$NAME.log
 }
@@ -201,19 +202,19 @@ mkdir $OUTPUT_DIR/step2_AnnotateIntervals/
 step2_AnnotateIntervals
 
 mkdir $OUTPUT_DIR/step3_CollectReadCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
 
 mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
 
 mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
 
 mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
 
 mkdir $OUTPUT_DIR/step7_ModelSegments/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
 
 mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
