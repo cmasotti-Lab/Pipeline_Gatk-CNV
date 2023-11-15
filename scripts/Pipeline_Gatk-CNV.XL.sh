@@ -6,13 +6,14 @@
 # PARAMETROS OBRIGATORIOS
 SCRATCH60="/home/scratch60/vlira_21set2023/"
 
-DATA=$(date "+%F") # EDITE SE QUISER USAR UMA PASTA DE UMA DATA ESPECIFICA 
+#DATA=$(date "+%F") # EDITE SE QUISER USAR UMA PASTA DE UMA DATA ESPECIFICA 
+DATA="2023-11-07"
 OUTPUT_DIR=$SCRATCH60"/Result_Gatk-CNV.XL."$DATA
 
 INPUT_DIR="/home/scratch60/rtorreglosa_12jan2024/preprocessing_READ_result/"
 BAM_FILES=$(find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam')
 JOBS=5
-mem=280
+mem=200
 #MAXmem=$((mem / JOBS))
 MAXmem=200
 
@@ -28,7 +29,7 @@ PON="/home/users/vlira/PanelOfNornal/PON.100COVID.100-eigensamples.XL.hdf5"
 mkdir $OUTPUT_DIR
 
 find "$INPUT_DIR" -maxdepth 1 -mindepth 1  -name '*.dedup.tags.bqsr.bam' | grep -Pv "ROP-25-|ROP-26-|ROP-27-|ROP-29-" > $OUTPUT_DIR/samples.list
-head -3 $OUTPUT_DIR/samples.list >  $OUTPUT_DIR/TOY.samples.list
+#head -3 $OUTPUT_DIR/samples.list >  $OUTPUT_DIR/TOY.samples.list
 OUTPUT_LOG="$OUTPUT_DIR.log"
 
 export OUTPUT_DIR
@@ -196,25 +197,25 @@ echo "                           >>>>>> Starting Pipeline to Run Pipeline_Delly_
 date >> $OUTPUT_LOG
 
 mkdir $OUTPUT_DIR/step1_PreprocessIntervals/
-step1_PreprocessIntervals
+#step1_PreprocessIntervals
 
 mkdir $OUTPUT_DIR/step2_AnnotateIntervals/
-step2_AnnotateIntervals
+#step2_AnnotateIntervals
 
 mkdir $OUTPUT_DIR/step3_CollectReadCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step3_CollectReadCounts  "$@"' 'step3_CollectReadCounts'
 
 mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step4_DenoiseReadCounts  "$@"' 'step4_DenoiseReadCounts'
 
 mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
 #xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
 
 mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
 
 mkdir $OUTPUT_DIR/step7_ModelSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
+xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
 
 mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
