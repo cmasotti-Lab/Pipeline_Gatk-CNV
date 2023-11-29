@@ -4,7 +4,7 @@
 #1. Ajustes das variaves de ambiente para facilitar na reexecução quando os diretorios forem atualizado
 
 # PARAMETROS OBRIGATORIOS
-SCRATCH60="/home/scratch60/vlira_21set2023/"
+SCRATCH60="/home/scratch60/vlira_20nov2023/"
 
 #DATA=$(date "+%F") # EDITE SE QUISER USAR UMA PASTA DE UMA DATA ESPECIFICA 
 DATA="2023-11-07"
@@ -16,6 +16,10 @@ JOBS=5
 mem=200
 #MAXmem=$((mem / JOBS))
 MAXmem=200
+
+COPY_RATIO=5
+CUTOFF_AMP=0.5
+CUTOFF_DEL=-1
 
 #TOOLS e DATABASES
 REF_FASTA="/home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/"
@@ -42,6 +46,9 @@ export PON
 export TARGET
 export BLACKLIST
 export MAXmem
+export COPY_RATIO
+export CUTOFF_AMP
+export CUTOFF_DEL
 
 step1_PreprocessIntervals (){
   echo "" >> $OUTPUT_LOG
@@ -72,7 +79,6 @@ step2_AnnotateIntervals (){
 }
 export -f step2_AnnotateIntervals
 
-
 step3_CollectReadCounts (){
   local SAMPLE=$1
   local NAME="${SAMPLE##*/}"
@@ -96,7 +102,6 @@ step4_DenoiseReadCounts (){
   echo ">>>>>> Executando step4_DenoiseReadCounts para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
 
-
   ${GATK} --java-options "-Xmx${MAXmem}G" DenoiseReadCounts \
     -I $OUTPUT_DIR/step3_CollectReadCounts/${NAME}.counts.hdf5 \
     --annotated-intervals $OUTPUT_DIR/step2_AnnotateIntervals/annotated_intervals.tsv \
@@ -105,7 +110,6 @@ step4_DenoiseReadCounts (){
     --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  2> $OUTPUT_DIR/step4_DenoiseReadCounts/$NAME.log
 }
 export -f step4_DenoiseReadCounts
-
 
 step5_PlotDenoisedCopyRatios (){
   local SAMPLE=$1
@@ -139,7 +143,6 @@ step6_CollectAllelicCounts (){
 }
 export -f step6_CollectAllelicCounts
 
-
 step7_ModelSegments (){
   local SAMPLE=$1
   local NAME="${SAMPLE##*/}"
@@ -155,8 +158,6 @@ step7_ModelSegments (){
 }
 export -f step7_ModelSegments
 
-
-
 step8_CallCopyRatioSegments (){
   local SAMPLE=$1
   local NAME="${SAMPLE##*/}"
@@ -169,7 +170,6 @@ step8_CallCopyRatioSegments (){
     --output $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg  2> $OUTPUT_DIR/step8_CallCopyRatioSegments/$NAME.log
 }
 export -f step8_CallCopyRatioSegments
-
 
 step9_PlotModeledSegments (){
   local SAMPLE=$1
@@ -189,11 +189,23 @@ step9_PlotModeledSegments (){
 }
 export -f step9_PlotModeledSegments
 
+step10_FilterCallCopyRatioSegments (){
+  local SAMPLE=$1
+  local NAME="${SAMPLE##*/}"
+  echo "" >> $OUTPUT_LOG
+  echo ">>>>>> Executando step10_FilterCallCopyRatioSegments para amostra: $NAME <<<" >> $OUTPUT_LOG
+  date >> $OUTPUT_LOG
+  
+  grep -v "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
+  grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= ${CUTOFF_DEL} || $5 >= ${CUTOFF_AMP} ) && ($4 > ${COPY_RATIO})) print $_}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
+}
+export -f step10_FilterCallCopyRatioSegments
 
 
 
 
-echo "                           >>>>>> Starting Pipeline to Run Pipeline_Delly_SV.sh <<<<<<" >> $OUTPUT_LOG
+
+echo "                           >>>>>> Starting Pipeline to Run Pipeline_GATK-CNV.XL.sh <<<<<<" >> $OUTPUT_LOG
 date >> $OUTPUT_LOG
 
 mkdir $OUTPUT_DIR/step1_PreprocessIntervals/
@@ -215,16 +227,16 @@ mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
 #xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
 
 mkdir $OUTPUT_DIR/step7_ModelSegments/
-xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
+#xargs -a $OUTPUT_DIR/TOY.samples.list -t -n1 -P${JOBS} bash -c 'step7_ModelSegments  "$@"' 'step7_ModelSegments'
 
 mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step8_CallCopyRatioSegments  "$@"' 'step8_CallCopyRatioSegments'
 
 mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments  "$@"' 'step9_PlotModeledSegments'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments  "$@"' 'step9_PlotModeledSegments'
 
-
-
+mkdir $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
 
 echo "" >> $OUTPUT_LOG
 echo "                           >>>>>> End Pipeline <<< " >> $OUTPUT_LOG
