@@ -196,9 +196,13 @@ step10_FilterCallCopyRatioSegments (){
   echo ">>>>>> Executando step10_FilterCallCopyRatioSegments para amostra: $NAME <<<" >> $OUTPUT_LOG
   date >> $OUTPUT_LOG
   
+  COPY_RATIO=5
+CUTOFF_AMP=0.5
+CUTOFF_DEL=-1
+
   grep -v "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
   # grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= ${CUTOFF_DEL} || $5 >= ${CUTOFF_AMP} ) && ($4 > ${COPY_RATIO})) print $_}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
-  grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= CUTOFF_DEL || $5 >= CUTOFF_AMP ) && ($4 > COPY_RATIO)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
+  grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= -1 || $5 >= 0.5 ) && ($4 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
 
 }
 export -f step10_FilterCallCopyRatioSegments
