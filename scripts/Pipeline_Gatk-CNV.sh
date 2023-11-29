@@ -206,6 +206,8 @@ step10_FilterCallCopyRatioSegments (){
 
   grep -v "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
   grep "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg | awk -F "\t" '{ if(($7 <= -1 || $7 >= 0.5 ) && ($5 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
+
+  grep -v "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg2
   grep "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg | awk -F "\t" '{ if(($7 <= CUTOFF_DEL || $7 >= CUTOFF_AMP ) && ($5 > COPY_RATIO)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg2
 
 }
