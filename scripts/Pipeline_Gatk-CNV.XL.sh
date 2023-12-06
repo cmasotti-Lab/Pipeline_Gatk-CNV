@@ -201,8 +201,8 @@ step10_FilterCallCopyRatioSegments (){
   CUTOFF_DEL=-1
 
   grep -v "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
-  grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= CUTOFF_DEL || $5 >= CUTOFF_AMP ) && ($4 > COPY_RATIO )) print $_}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
-  #grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= -1 || $5 >= 0.5 ) && ($4 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
+  # grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= ${CUTOFF_DEL} || $5 >= ${CUTOFF_AMP} ) && ($4 > ${COPY_RATIO})) print $_}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
+  grep "^chr" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.seg | awk -F "\t" '{ if(($5 <= -1 || $5 >= 0.5 ) && ($4 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.seg
 
   grep -v "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
   grep "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg | awk -F "\t" '{ if(($7 <= -1 || $7 >= 0.5 ) && ($5 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
@@ -247,6 +247,8 @@ mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
 mkdir $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
 
+cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+ 
 echo "" >> $OUTPUT_LOG
 echo "                           >>>>>> End Pipeline <<< " >> $OUTPUT_LOG
 date >> $OUTPUT_LOG

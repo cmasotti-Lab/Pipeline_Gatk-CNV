@@ -207,9 +207,6 @@ step10_FilterCallCopyRatioSegments (){
   grep -v "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
   grep "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg | awk -F "\t" '{ if(($7 <= -1 || $7 >= 0.5 ) && ($5 > 5)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg
 
-  grep -v "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg2
-  grep "^ROP" $OUTPUT_DIR/step8_CallCopyRatioSegments/${NAME}.called.igv.seg | awk -F "\t" '{ if(($7 <= CUTOFF_DEL || $7 >= CUTOFF_AMP ) && ($5 > COPY_RATIO)) print $0}' >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/${NAME}.called.filt.igv.seg2
-
 }
 export -f step10_FilterCallCopyRatioSegments
 
@@ -249,6 +246,9 @@ mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
 
 mkdir $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
+
+cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg | grep "Sample"| head -1 > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg | grep -v "Sample" >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
 
 echo "" >> $OUTPUT_LOG
 echo "                           >>>>>> End Pipeline <<< " >> $OUTPUT_LOG
