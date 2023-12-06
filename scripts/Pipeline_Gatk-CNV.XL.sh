@@ -247,8 +247,9 @@ mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
 mkdir $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/
 xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
 
-cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
- 
+cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg | grep "Sample"| head -1 > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP_*.called.filt.igv.seg | grep -v "Sample" >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+
 echo "" >> $OUTPUT_LOG
 echo "                           >>>>>> End Pipeline <<< " >> $OUTPUT_LOG
 date >> $OUTPUT_LOG
