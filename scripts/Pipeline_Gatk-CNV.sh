@@ -139,7 +139,7 @@ step5_PlotDenoisedCopyRatios_DOCKER (){
     -v $OUTPUT_DIR/:/gatk/my_data \
     -v ${REF_FASTA}:/gatk/hg38/ \
     -u $(id -u):$(id -g) broadinstitute/gatk \
-    ${GATK} --java-options "-Xmx${MAXmem}G" PlotDenoisedCopyRatios \
+    gatk --java-options "-Xmx${MAXmem}G" PlotDenoisedCopyRatios \
     --standardized-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.standardizedCR.tsv \
     --denoised-copy-ratios $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv \
     --sequence-dictionary ${REF_FASTA}/Homo_sapiens_assembly38.dict \
@@ -221,7 +221,7 @@ step9_PlotModeledSegments_DOCKER (){
     -v $OUTPUT_DIR/:/gatk/my_data \
     -v ${REF_FASTA}:/gatk/hg38/ \
     -u $(id -u):$(id -g) broadinstitute/gatk \
-    ${GATK} --java-options "-Xmx${MAXmem}G" PlotModeledSegments \
+    gatk --java-options "-Xmx${MAXmem}G" PlotModeledSegments \
     --denoised-copy-ratios  $OUTPUT_DIR/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
     --allelic-counts $OUTPUT_DIR/step7_ModelSegments/${NAME}.hets.tsv \
     --segments $OUTPUT_DIR/step7_ModelSegments/${NAME}.modelFinal.seg \
