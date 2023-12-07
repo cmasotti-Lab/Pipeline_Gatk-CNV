@@ -128,6 +128,29 @@ step5_PlotDenoisedCopyRatios (){
 }
 export -f step5_PlotDenoisedCopyRatios
 
+step5_PlotDenoisedCopyRatios_DOCKER (){
+  local SAMPLE=$1
+  local NAME="${SAMPLE##*/}"
+  echo "" >> $OUTPUT_LOG
+  echo ">>>>>> Executando step5_PlotDenoisedCopyRatios_DOCKER para amostra: $NAME <<<" >> $OUTPUT_LOG
+  date >> $OUTPUT_LOG
+
+  docker run \
+    --rm \
+    -v $OUTPUT_DIR/:/gatk/my_data \
+    -v ${REF_FASTA}:/gatk/hg38/ \
+    -u $(id -u):$(id -g) broadinstitute/gatk \
+    gatk --java-options "-Xmx${MAXmem}G" PlotDenoisedCopyRatios \
+    --standardized-copy-ratios /gatk/my_data/step4_DenoiseReadCounts/${NAME}.standardizedCR.tsv \
+    --denoised-copy-ratios /gatk/my_data/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv \
+    --sequence-dictionary /gatk/hg38//Homo_sapiens_assembly38.dict \
+    --minimum-contig-length 46709983 \
+    --output /gatk/my_data/step5_PlotDenoisedCopyRatios/ \
+    --output-prefix ${NAME}  2> $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/$NAME.log
+}
+export -f step5_PlotDenoisedCopyRatios_DOCKER
+
+
 step6_CollectAllelicCounts (){
   local SAMPLE=$1
   local NAME="${SAMPLE##*/}"
@@ -189,6 +212,45 @@ step9_PlotModeledSegments (){
 }
 export -f step9_PlotModeledSegments
 
+
+step9_PlotModeledSegments_DOCKER (){
+  local SAMPLE=$1
+  local NAME="${SAMPLE##*/}"
+  echo "" >> $OUTPUT_LOG
+  echo ">>>>>> Executando step9_PlotModeledSegments_DOCKER para amostra: $NAME <<<" >> $OUTPUT_LOG
+  date >> $OUTPUT_LOG
+
+  docker run \
+    --rm \
+    -v $OUTPUT_DIR/:/gatk/my_data \
+    -v ${REF_FASTA}:/gatk/hg38/ \
+    -u $(id -u):$(id -g) broadinstitute/gatk \
+    gatk --java-options "-Xmx${MAXmem}G" PlotModeledSegments \
+    --denoised-copy-ratios  /gatk/my_data/step4_DenoiseReadCounts/${NAME}.denoisedCR.tsv  \
+    --allelic-counts /gatk/my_data/step7_ModelSegments/${NAME}.hets.tsv \
+    --segments /gatk/my_data/step7_ModelSegments/${NAME}.modelFinal.seg \
+    --sequence-dictionary /gatk/hg38/Homo_sapiens_assembly38.dict \
+    --minimum-contig-length 46709983 \
+    --output /gatk/my_data/step9_PlotModeledSegments/ \
+    --output-prefix ${NAME}  2>  $OUTPUT_DIR/step9_PlotModeledSegments/$NAME.log
+
+  # docker run \
+  # -v /home/scratch60/vlira_20nov2023/Result_Gatk-CNV.2023-11-07:/gatk/my_data \
+  # -v /home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/:/gatk/hg38/ \
+  # -u $(id -u):$(id -g) broadinstitute/gatk \
+  # gatk PlotModeledSegments \
+  # --denoised-copy-ratios /gatk/my_data/step4_DenoiseReadCounts/ROP-94-ExC85-xgenV2_S62.dedup.tags.bqsr.bam.denoisedCR.tsv \
+  # --allelic-counts /gatk/my_data/step7_ModelSegments/ROP-94-ExC85-xgenV2_S62.dedup.tags.bqsr.bam.hets.tsv \
+  # --segments /gatk/my_data/step7_ModelSegments/ROP-94-ExC85-xgenV2_S62.dedup.tags.bqsr.bam.modelFinal.seg \
+  # --sequence-dictionary /gatk/hg38/Homo_sapiens_assembly38.dict \
+  # --minimum-contig-length 46709983 \
+  # --output /gatk/my_data/step9_PlotModeledSegments/ \
+  # --output-prefix ROP-94-ExC85-xgenV2_S62.dedup.tags.bqsr.bam
+
+  #docker run -v /home/scratch60/vlira_20nov2023/Result_Gatk-CNV.2023-11-07:/gatk/my_data -v /home/projects2/LIDO/molPathol/oncoseek/nextseq/hg38/:/gatk/hg38/ -it -u $(id -u):$(id -g) broadinstitute/gatk
+}
+export -f step9_PlotModeledSegments_DOCKER
+
 step10_FilterCallCopyRatioSegments (){
   local SAMPLE=$1
   local NAME="${SAMPLE##*/}"
@@ -231,6 +293,7 @@ mkdir $OUTPUT_DIR/step4_DenoiseReadCounts/
 
 mkdir $OUTPUT_DIR/step5_PlotDenoisedCopyRatios/
 #xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios  "$@"' 'step5_PlotDenoisedCopyRatios'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step5_PlotDenoisedCopyRatios_DOCKER  "$@"' 'step5_PlotDenoisedCopyRatios_DOCKER'
 
 mkdir $OUTPUT_DIR/step6_CollectAllelicCounts/
 #xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step6_CollectAllelicCounts  "$@"' 'step6_CollectAllelicCounts'
@@ -243,12 +306,13 @@ mkdir $OUTPUT_DIR/step8_CallCopyRatioSegments/
 
 mkdir $OUTPUT_DIR/step9_PlotModeledSegments/
 #xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments  "$@"' 'step9_PlotModeledSegments'
+xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step9_PlotModeledSegments_DOCKER  "$@"' 'step9_PlotModeledSegments_DOCKER'
 
 mkdir $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/
-xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
+#xargs -a $OUTPUT_DIR/samples.list -t -n1 -P${JOBS} bash -c 'step10_FilterCallCopyRatioSegments  "$@"' 'step10_FilterCallCopyRatioSegments'
 
-cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP-*.called.filt.igv.seg | grep "Sample"| head -1 > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
-cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP-*.called.filt.igv.seg | grep -v "Sample" >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+#cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP-*.called.filt.igv.seg | grep "Sample"| head -1 > $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
+#cat  $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ROP-*.called.filt.igv.seg | grep -v "Sample" >> $OUTPUT_DIR/step10_FilterCallCopyRatioSegments/ALL-ROP.called.filt.igv.seg
 
 echo "" >> $OUTPUT_LOG
 echo "                           >>>>>> End Pipeline <<< " >> $OUTPUT_LOG

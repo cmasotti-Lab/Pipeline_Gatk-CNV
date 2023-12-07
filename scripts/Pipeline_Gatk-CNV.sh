@@ -136,6 +136,7 @@ step5_PlotDenoisedCopyRatios_DOCKER (){
   date >> $OUTPUT_LOG
 
   docker run \
+    --rm \
     -v $OUTPUT_DIR/:/gatk/my_data \
     -v ${REF_FASTA}:/gatk/hg38/ \
     -u $(id -u):$(id -g) broadinstitute/gatk \
@@ -218,6 +219,7 @@ step9_PlotModeledSegments_DOCKER (){
   date >> $OUTPUT_LOG
 
   docker run \
+    --rm \
     -v $OUTPUT_DIR/:/gatk/my_data \
     -v ${REF_FASTA}:/gatk/hg38/ \
     -u $(id -u):$(id -g) broadinstitute/gatk \
