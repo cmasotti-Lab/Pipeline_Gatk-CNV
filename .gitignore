@@ -1,3 +1,6 @@
 
 *.seg
 *.log
+/GISTIC2
+/Result_Gatk-CNV.2023-11-07
+/step7_ModelSegments
